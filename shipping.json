@@ -17,7 +17,7 @@
 {
     "id": "ems",
     "title": "EMS",
-    "foreign": true,
+    "overseas": true,
     "prices": [{"label": "Delivery", "amount": 18000}]
 }
 ]

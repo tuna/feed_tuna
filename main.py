@@ -85,10 +85,12 @@ def browers_hander(bot, update):
         commodity = commodities[data['idx']]
         chat_id = data['chat']
 
-        invoice_params = "{}_{}".format(
-            commodity['id'],
-            data['qty']
-        )
+        invoice_params = json.dumps({
+            'item_idx': data['idx'],
+            'qty': data['qty']
+        })
+
+        start_parameter="{}_{}".format(commodity['id'], data['qty'])
 
         prices = copy.deepcopy(commodity['prices'])
         prices[0]['amount'] *= data['qty']
@@ -97,16 +99,16 @@ def browers_hander(bot, update):
             chat_id=chat_id,
             title="{} x{}".format(commodity['title'], data['qty']),
             description=commodity['description'],
-            payload=json.dumps(invoice_params),
+            payload=invoice_params,
             provider_token=PROVIDER_TOKEN,
-            start_parameter=invoice_params,
+            start_parameter=start_parameter,
             currency="CNY",
             prices=prices,
             need_name=True,
             need_phone_number=True,
             need_email=True,
             need_shipping_address=True,
-            is_flexible=True
+            is_flexible=(not commodity.get('virtual'))
         )
         return
 
@@ -118,17 +120,25 @@ def err_handler(bot, update, err):
 def payment_handler(bot, update):
     if update.shipping_query:
         # If a shipping address was requested and you included the parameter is_flexible, the Bot API will send an Update with a shipping_query field to the bot. The bot must respond using answerShippingQuery either with a list of possible delivery options and the relevant delivery prices, or with an error (for example, if delivery to the specified address is not possible).
+        payload = json.loads(update.shipping_query.get('invoice_payload'))
+        print('payload:')
+        print(payload)
+        commodity = commodities[int(payload['item_idx'])]
+        overseas = update.shipping_query.get('shipping_address').get('country_code') != "CN"
+        options = list(filter(lambda x: (x.get('overseas', False)) == overseas, shipping_options))
+        print('options:')
+        print(options)
 
         bot.answer_shipping_query(
             shipping_query_id=update.shipping_query.get('id'),
             ok=True,
-            shipping_options=shipping_options
+            shipping_options=options
         )
         return
     if update.pre_checkout_query:
         bot.answer_pre_checkout_query(
-            update.pre_checkout_query.get('id'),
-            True
+            pre_checkout_query_id=update.pre_checkout_query.get('id'),
+            ok=True
         )
         return
     if update.message and update.message.successful_payment:
