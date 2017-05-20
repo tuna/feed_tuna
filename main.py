@@ -6,6 +6,7 @@ from handler import PaymentHandler, BrowersHandler
 import logging
 import json
 import copy
+from pymongo import MongoClient
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -16,6 +17,9 @@ commodities = json.load(open('commodities.json', 'r'))
 shipping_options = json.load(open('shipping.json', 'r'))
 
 PROVIDER_TOKEN = "284685063:TEST:OTQ2YTIzNjY0ZTVl"
+
+mongo_client = MongoClient()
+db = mongo_client.feed_tuna
 
 def start(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Feed me!🐬")
@@ -121,13 +125,9 @@ def payment_handler(bot, update):
     if update.shipping_query:
         # If a shipping address was requested and you included the parameter is_flexible, the Bot API will send an Update with a shipping_query field to the bot. The bot must respond using answerShippingQuery either with a list of possible delivery options and the relevant delivery prices, or with an error (for example, if delivery to the specified address is not possible).
         payload = json.loads(update.shipping_query.get('invoice_payload'))
-        print('payload:')
-        print(payload)
         commodity = commodities[int(payload['item_idx'])]
         overseas = update.shipping_query.get('shipping_address').get('country_code') != "CN"
         options = list(filter(lambda x: (x.get('overseas', False)) == overseas, shipping_options))
-        print('options:')
-        print(options)
 
         bot.answer_shipping_query(
             shipping_query_id=update.shipping_query.get('id'),
@@ -144,6 +144,11 @@ def payment_handler(bot, update):
     if update.message and update.message.successful_payment:
         # A payment has been placed successfully. Once your bot receives this message, it should proceed with delivering the goods or services purchased by the user.
         print(update.message.successful_payment)
+        inserted_id = db.orders.insert_one(update.message.successful_payment).inserted_id
+        bot.send_message(
+            chat_id=update.message.chat_id,
+            text="Your order has been placed successfully. Tracking ID: {}. You can email us for inquiries.".format(str(inserted_id))
+        )
         return
 
 dispatcher.add_handler(CommandHandler('start', start))
