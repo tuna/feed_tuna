@@ -1,0 +1,23 @@
+[
+{
+    "id": "sf-express",
+    "title": "顺丰速运",
+    "prices": [{"label": "Delivery", "amount": 2300}]
+},
+{
+    "id": "yto",
+    "title": "圆通速递",
+    "prices": [{"label": "Delivery", "amount": 1000}]
+},
+{
+    "id": "mail",
+    "title": "挂号信",
+    "prices": [{"label": "Delivery", "amount": 800}]
+},
+{
+    "id": "ems",
+    "title": "EMS",
+    "foreign": true,
+    "prices": [{"label": "Delivery", "amount": 18000}]
+}
+]

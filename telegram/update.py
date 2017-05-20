@@ -19,6 +19,7 @@
 """This module contains an object that represents a Telegram Update."""
 
 from telegram import (Message, TelegramObject, InlineQuery, ChosenInlineResult, CallbackQuery)
+import json
 
 
 class Update(TelegramObject):
@@ -61,6 +62,8 @@ class Update(TelegramObject):
                  callback_query=None,
                  channel_post=None,
                  edited_channel_post=None,
+                 pre_checkout_query=None,
+                 shipping_query=None,
                  **kwargs):
         # Required
         self.update_id = int(update_id)
@@ -72,6 +75,8 @@ class Update(TelegramObject):
         self.callback_query = callback_query
         self.channel_post = channel_post
         self.edited_channel_post = edited_channel_post
+        self.pre_checkout_query = pre_checkout_query
+        self.shipping_query = shipping_query
 
         self._effective_user = None
         self._effective_chat = None

@@ -141,6 +141,7 @@ class Message(TelegramObject):
                  channel_chat_created=False,
                  pinned_message=None,
                  forward_from_message_id=None,
+                 successful_payment=None,
                  bot=None,
                  **kwargs):
         # Required
@@ -179,6 +180,7 @@ class Message(TelegramObject):
         self.channel_chat_created = bool(channel_chat_created)
         self.pinned_message = pinned_message
         self.forward_from_message_id = forward_from_message_id
+        self.successful_payment = successful_payment
 
         self.bot = bot
 

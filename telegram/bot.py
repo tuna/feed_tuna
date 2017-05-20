@@ -1776,6 +1776,112 @@ class Bot(TelegramObject):
         return (self.__class__, (self.token, self.base_url.replace(self.token, ''),
                                  self.base_file_url.replace(self.token, '')))
 
+    @log
+    @message
+    def send_invoice(self,
+                   chat_id,
+                   title,
+                   description,
+                   payload,
+                   provider_token,
+                   start_parameter,
+                   currency,
+                   prices,
+                   photo_url=None,
+                   need_name=None,
+                   need_phone_number=None,
+                   need_email=None,
+                   need_shipping_address=None,
+                   is_flexible=None,
+                   **kwargs):
+        """
+            wrapper of Telegram Bot API sendInvoice
+            https://core.telegram.org/bots/api#sendinvoice
+        """
+        url = '{0}/sendInvoice'.format(self.base_url)
+
+        data = {
+            'chat_id': chat_id,
+            'title': title,
+            'description': description,
+            'payload': payload,
+            'provider_token': provider_token,
+            'start_parameter': start_parameter,
+            'currency': currency,
+            'prices': prices
+        }
+
+        if photo_url:
+            data['photo_url'] = photo_url
+        if need_name:
+            data['need_name'] = need_name
+        if need_shipping_address:
+            data['need_shipping_address'] = need_shipping_address
+        if need_email:
+            data['need_email'] = need_email
+        if is_flexible:
+            data['is_flexible'] = is_flexible
+
+        return url, data
+
+    @log
+    def answer_pre_checkout_query(
+        self,
+        pre_checkout_query_id,
+        ok,
+        error_message = None,
+        timeout = None
+        ):
+        """
+            https://core.telegram.org/bots/api#answerprecheckoutquery
+        """
+        url = '{0}/answerPreCheckoutQuery'.format(self.base_url)
+        data = {
+            'pre_checkout_query_id': pre_checkout_query_id,
+            'ok': ok
+        }
+
+        if error_message:
+            data['error_message'] = error_message
+
+        result = self._request.post(url, data, timeout=timeout)
+
+        if result is True:
+            return result
+
+        return Message.de_json(result, self)
+
+    @log
+    def answer_shipping_query(
+        self,
+        shipping_query_id,
+        ok,
+        shipping_options = None,
+        error_message = None,
+        timeout = None
+        ):
+        """
+            https://core.telegram.org/bots/api#answershippingquery
+        """
+        url = '{0}/answerShippingQuery'.format(self.base_url)
+        data = {
+            'shipping_query_id': shipping_query_id,
+            'ok': ok
+        }
+
+        if shipping_options:
+            data['shipping_options'] = shipping_options
+
+        if error_message:
+            data['error_message'] = error_message
+
+        result = self._request.post(url, data, timeout=timeout)
+
+        if result is True:
+            return result
+
+        return Message.de_json(result, self)
+
     # camelCase aliases
     getMe = get_me
     sendMessage = send_message
