@@ -3,23 +3,27 @@ from telegram import bot
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from handler import PaymentHandler, BrowersHandler
-import logging
-import json
-import copy
+import json, copy, os, sqlite3
 from pymongo import MongoClient
+import logging
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-updater = Updater(token='276217921:AAEFO9zEwHoRZhreHpHC7H94USXF9ZzilJo')
+TG_BOT_KEY = os.environ['TG_BOT_KEY']
+PROVIDER_TOKEN = os.environ['PROVIDER_TOKEN']
+
+updater = Updater(token=TG_BOT_KEY)
 dispatcher = updater.dispatcher
 commodities = json.load(open('commodities.json', 'r'))
 shipping_options = json.load(open('shipping.json', 'r'))
 
-PROVIDER_TOKEN = "284685063:TEST:OTQ2YTIzNjY0ZTVl"
+# conn = sqlite3.connect('feed_tuna.db')
+# cursor = conn.cursor()
+# cursor.execute('''CREATE TABLE IF NOT EXISTS orders ()''')
 
-mongo_client = MongoClient()
-db = mongo_client.feed_tuna
+client = MongoClient()
+db = client.feed_tuna
 
 def start(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Feed me!🐬")
@@ -44,22 +48,6 @@ def browers(bot, update):
         parse_mode="Markdown",
         reply_markup={"inline_keyboard": buttons}
     )
-    """
-    bot.send_invoice(
-        chat_id=update.message.chat_id,
-        title="TUNA Sticker Set",
-        description="Make contributions to Tsinghua University TUNA Association by buying our stickers.",
-        payload="1234",
-        provider_token="284685063:TEST:OTQ2YTIzNjY0ZTVl",
-        start_parameter="1234",
-        currency="CNY",
-        prices=[{'label': 'Sticker Set', 'amount': 3000}],
-        need_name=True,
-        need_phone_number=True,
-        need_email=True,
-        need_shipping_address=True,
-        is_flexible=True
-    )"""
 
 def browers_hander(bot, update):
     data = json.loads(update.callback_query.data)
@@ -124,9 +112,11 @@ def err_handler(bot, update, err):
 def payment_handler(bot, update):
     if update.shipping_query:
         # If a shipping address was requested and you included the parameter is_flexible, the Bot API will send an Update with a shipping_query field to the bot. The bot must respond using answerShippingQuery either with a list of possible delivery options and the relevant delivery prices, or with an error (for example, if delivery to the specified address is not possible).
+        print('shipping query')
         payload = json.loads(update.shipping_query.get('invoice_payload'))
         commodity = commodities[int(payload['item_idx'])]
-        overseas = update.shipping_query.get('shipping_address').get('country_code') != "CN"
+        print(update.shipping_query.get('shipping_address'))
+        overseas =  update.shipping_query.get('shipping_address').get('country_code') != "CN"
         options = list(filter(lambda x: (x.get('overseas', False)) == overseas, shipping_options))
 
         bot.answer_shipping_query(
@@ -143,7 +133,7 @@ def payment_handler(bot, update):
         return
     if update.message and update.message.successful_payment:
         # A payment has been placed successfully. Once your bot receives this message, it should proceed with delivering the goods or services purchased by the user.
-        print(update.message.successful_payment)
+        print(update.message.successful_payment.get('order_info'))
         inserted_id = db.orders.insert_one(update.message.successful_payment).inserted_id
         bot.send_message(
             chat_id=update.message.chat_id,
