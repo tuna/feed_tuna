@@ -1819,6 +1819,8 @@ class Bot(TelegramObject):
             data['need_shipping_address'] = need_shipping_address
         if need_email:
             data['need_email'] = need_email
+        if need_phone_number:
+            data['need_phone_number'] = need_phone_number
         if is_flexible:
             data['is_flexible'] = is_flexible
 

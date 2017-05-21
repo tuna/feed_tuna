@@ -112,7 +112,6 @@ def err_handler(bot, update, err):
 def payment_handler(bot, update):
     if update.shipping_query:
         # If a shipping address was requested and you included the parameter is_flexible, the Bot API will send an Update with a shipping_query field to the bot. The bot must respond using answerShippingQuery either with a list of possible delivery options and the relevant delivery prices, or with an error (for example, if delivery to the specified address is not possible).
-        print('shipping query')
         payload = json.loads(update.shipping_query.get('invoice_payload'))
         commodity = commodities[int(payload['item_idx'])]
         print(update.shipping_query.get('shipping_address'))
