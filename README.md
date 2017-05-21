@@ -1,9 +1,12 @@
 # 金枪鱼喂食计划
+
 源于几个flag
  - [喂食.tuna.moe](https://github.com/tuna/collection/issues/44)
  - [开店卖周边](https://github.com/tuna/collection/issues/41)
  
 i.e., TUNA 一直希望有一个小额募捐平台，及一个可以用来卖贴纸、卖 Tunaive 、卖装满镜像的硬盘的平台。[tuna/feed_tuna](https://github.com/tuna/feed_tuna)项目目前是一个利用了2017 年 5 月 18 日 Telegram Bot API 新增的 Payment 功能的 Telegram Bot, 实现了金枪鱼喂食计划部分功能。
+
+Live Demo: (http://t.me/FeedTUNA_bot) 付款可用卡号： 4242 4242 4242 4242
 
 ## 目前实现的功能
 ### 商品销售
