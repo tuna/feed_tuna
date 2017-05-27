@@ -21,7 +21,7 @@ for com in commodity_list:
     commodities[com['id']] = com
 shipping_options = json.load(open('shipping.json', 'r'))
 
-conn = sqlite3.connect('feed_tuna.db')
+conn = sqlite3.connect('db/feed_tuna.db')
 cursor = conn.cursor()
 cursor.execute('''CREATE TABLE IF NOT EXISTS `orders` (
 	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -45,9 +45,6 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS `orders` (
 );''')
 conn.commit()
 conn.close()
-
-client = MongoClient()
-db = client.feed_tuna
 
 def start(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Feed me!🐬")
@@ -211,7 +208,7 @@ def payment_handler(bot, update):
 
         print('values: ', values)
 
-        conn = sqlite3.connect('feed_tuna.db')
+        conn = sqlite3.connect('db/feed_tuna.db')
         cursor = conn.cursor()
 
         r = cursor.execute("INSERT INTO orders VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,? ,? ,? ,? ,?)", values)
