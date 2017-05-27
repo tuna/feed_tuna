@@ -4,7 +4,6 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from handler import PaymentHandler, BrowersHandler
 import json, copy, os, sqlite3
-from pymongo import MongoClient
 from datetime import datetime
 import logging
 
