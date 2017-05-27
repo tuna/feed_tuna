@@ -1,7 +1,7 @@
 [
 {
   "title": "TUNA Sticker Set",
-  "id": "sticker_set",
+  "id": 0,
   "description": "Make contributions to Tsinghua University TUNA Association by buying our stickers.",
   "virtual": false,
   "prices":
@@ -14,7 +14,7 @@
 },
 {
   "title": "TUNA Badge Set",
-  "id": "badge_set",
+  "id": 1,
   "description": "Contains a badge and a key ring.",
   "virtual": false,
   "prices":
@@ -27,7 +27,7 @@
 },
 {
   "title": "TUNA Stickers+Badge",
-  "id": "sticker_badge",
+  "id": 2,
   "description": "Full set of TUNA stickers, a badge and a key ring.",
   "virtual": false,
   "prices":
@@ -40,7 +40,7 @@
 },
 {
   "title": "Donate TUNA",
-  "id": "donation",
+  "id": 3,
   "description": "Donate Tsinghua University TUNA Association. We'd greatly appreciate your help.",
   "virtual": true,
   "prices":
