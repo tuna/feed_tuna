@@ -6,6 +6,7 @@ from handler import PaymentHandler, BrowersHandler
 import json, copy, os, sqlite3
 from datetime import datetime
 import logging
+import notifier
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -223,6 +224,8 @@ def payment_handler(bot, update):
             chat_id=update.message.chat_id,
             text="Your order has been placed successfully. Tracking ID: {}. You can email us with your tracking ID for inquiries.".format(str(inserted_id))
         )
+
+        notifier.notify(inserted_id, values)
         return
 
 dispatcher.add_handler(CommandHandler('start', start))
