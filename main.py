@@ -48,7 +48,14 @@ conn.commit()
 conn.close()
 
 def start(bot, update):
-    bot.send_message(chat_id=update.message.chat_id, text="Feed me!🐬")
+    text = update.message.text
+    text_parts = text.split(' ')
+    if len(text_parts) > 1:
+        idx, qty = text_parts[1].split('_')
+        idx, qty = int(idx), int(qty)
+        send_invoice(idx, qty, update.message.chat_id, bot)
+    else:
+        bot.send_message(chat_id=update.message.chat_id, text="Feed me!🐬")
 
 def browers(bot, update):
     if update.message.chat_id < 0:
@@ -105,32 +112,36 @@ def browers_hander(bot, update):
         commodity = commodities[data['id']]
         chat_id = data['chat']
 
-        invoice_params = json.dumps({
-            'item_id': data['id'],
-            'qty': data['qty']
-        })
+        send_invoice(data['id'], data['qty'], chat_id, bot)
+        return
 
-        start_parameter="{}_{}".format(commodity['id'], data['qty'])
+def send_invoice(item_id, qty, chat_id, bot):
+    commodity = commodities[item_id]
 
-        prices = copy.deepcopy(commodity['prices'])
-        prices[0]['amount'] *= data['qty']
+    invoice_params = json.dumps({
+        'item_id': item_id,
+        'qty': qty
+    })
 
-        bot.send_invoice(
-            chat_id=chat_id,
-            title="{} x{}".format(commodity['title'], data['qty']),
-            description=commodity['description'],
-            payload=invoice_params,
-            provider_token=PROVIDER_TOKEN,
-            start_parameter=start_parameter,
-            currency="CNY",
-            prices=prices,
-            need_name=True,
-            need_phone_number=True,
+    start_parameter="{}_{}".format(item_id, qty)
+
+    prices = copy.deepcopy(commodity['prices'])
+    prices[0]['amount'] *= qty
+    bot.send_invoice(
+        chat_id=chat_id,
+        title="{} x{}".format(commodity['title'], qty),
+        description=commodity['description'],
+        payload=invoice_params,
+        provider_token=PROVIDER_TOKEN,
+        start_parameter=start_parameter,
+        currency="CNY",
+        prices=prices,
+        need_name=True,
+        need_phone_number=True,
             need_email=True,
             need_shipping_address=(not commodity.get('virtual')),
             is_flexible=(not commodity.get('virtual'))
         )
-        return
 
 def err_handler(bot, update, err):
     print('err happended')
