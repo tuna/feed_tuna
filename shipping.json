@@ -15,6 +15,11 @@
     "prices": [{"label": "Delivery", "amount": 800}]
 },
 {
+    "id": "self_pick",
+    "title": "自取",
+    "prices": [{"label": "Delivery", "amount": 0}]
+},
+{
     "id": "ems",
     "title": "EMS",
     "overseas": true,
