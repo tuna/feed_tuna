@@ -53,14 +53,14 @@
 },
 {
   "title": "Member Fee",
-  "id": 3,
+  "id": 4,
   "description": "TUNA member fee for 1 academic year",
   "virtual": true,
   "prices":
     [
       {
         "label": "Donation",
-        "amount": 233333
+        "amount": 2333
       }
     ]
 }

@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 from telegram import bot
 from telegram.ext import Updater
+from telegram.ext import Filters, MessageHandler
 from telegram.ext import CommandHandler
 from handler import PaymentHandler, BrowersHandler
 import json, copy, os, sqlite3
@@ -243,5 +244,6 @@ dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('buy', browers))
 dispatcher.add_handler(PaymentHandler(payment_handler))
 dispatcher.add_handler(BrowersHandler(browers_hander))
+dispatcher.add_handler(MessageHandler(Filters.text, browers))
 dispatcher.add_error_handler(err_handler)
 updater.start_polling()
