@@ -54,12 +54,12 @@
 {
   "title": "Member Fee",
   "id": 4,
-  "description": "TUNA member fee for 1 academic year",
+  "description": "TUNA member fee for 1 academic year. Not refundable.",
   "virtual": true,
   "prices":
     [
       {
-        "label": "Donation",
+        "label": "Member Fee",
         "amount": 2333
       }
     ]
